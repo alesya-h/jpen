@@ -30,6 +30,12 @@ along with jpen.  If not, see <http://www.gnu.org/licenses/>.
     <url>git@github.com:jpen-library/jpen.git</url>
   </scm>
   <description>Java Pen Tablet Access Library</description>
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License, Version 3.0 or later</name>
+      <url>http://www.gnu.org/licenses/lgpl.html</url>
+    </license>
+  </licenses>
   <repositories>
     <repository>
       <id>freehep-maven</id>
