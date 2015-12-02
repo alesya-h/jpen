@@ -36,43 +36,49 @@ import jpen.owner.PenClip;
 import jpen.PenProvider;
 import jpen.internal.ActiveWindowProperty;
 
+/**
+<b>Warning:</b> This class can be used only once (as a singleton instance). Creating more than one will result on an {@link java.lang.IllegalStateException} thrown by the {@link jpen.PenManager}. If you need to listen on multiple AWT components then use only the the {@link jpen.owner.multiAwt.AwtPenToolkit} class. Usage of {@code jpen.owner.multiAwt.AwtPenToolkit} and {@code AwtPenOwner} is exclusive, you can not use {@code jpen.owner.multiAwt.AwtPenToolkit} once you have used {@code AwtPenOwner} and vice versa.
+*/
 public final class AwtPenOwner
-	extends ComponentPenOwner{
+	extends ComponentPenOwner {
 
 	public final Component component;
-	private final MouseListener mouseListener=new MouseAdapter(){
-				@Override
-				public void mouseExited(MouseEvent ev) {
-					synchronized(getPenSchedulerLock(ev.getComponent())){
-						if(!startDraggingOut())
-							pause();
-					}
-				}
+	private final MouseListener mouseListener=new MouseAdapter() {
+		@Override
+		public void mouseExited(MouseEvent ev) {
+			synchronized(getPenSchedulerLock(ev.getComponent())) {
+				if(!startDraggingOut())
+					pause();
+			}
+		}
 
-				@Override
-				public void mouseEntered(MouseEvent ev) {
-					synchronized(getPenSchedulerLock(ev.getComponent())){
-						if(!stopDraggingOut()){
-							unpauser.enable(); // unpauses when mouse motion is detected.
-						}
-					}
-				}
-			};
-
+		@Override
+		public void mouseEntered(MouseEvent ev) {
+			synchronized(getPenSchedulerLock(ev.getComponent())) {
+				if(!stopDraggingOut())
+					unpause();
+			}
+		}
+	};
 	/**
-	<b>Warning:</b> the Mac OS X provider doesn't work when creating multiple {@code AwtPenOwner}s. If you need to use JPen on multiple AWT components use {@link jpen.owner.multiAwt.AwtPenToolkit} instead.
+	<b>Warning:</b> See {@link AwtPenOwner}.
 	*/
-	public AwtPenOwner(Component component){
+	public AwtPenOwner(Component component) {
 		this.component=component;
 	}
 
 	@Override
-	public Component getActiveComponent(){
+	public Component getActiveComponent() {
 		return component;
 	}
 
 	@Override
-	protected void init(){
+	protected void init() {
 		component.addMouseListener(mouseListener);
+	}
+	
+	@Override
+	public boolean enforceSinglePenManager(){
+		return true;
 	}
 }
